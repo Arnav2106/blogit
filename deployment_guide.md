@@ -11,7 +11,7 @@ This guide provides a streamlined process for deploying your Full Stack Chat App
     - Click "Connect" on your Cluster.
     - Choose "Drivers".
     - Copy the connection string. It looks like: `mongodb+srv://<db_username>:<db_password>@cluster0.xxxx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`
-    - Replace `<db_password>` with your actual password.
+    - **IMPORTANT**: Replace `<db_password>` with your actual password (and **remove the `<` and `>` symbols**).
 
 ## 2. Render Deployment (Web Service)
 

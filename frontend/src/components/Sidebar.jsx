@@ -2,13 +2,15 @@ import { useEffect, useState } from "react";
 import { useChatStore } from "../store/useChatStore";
 import { useAuthStore } from "../store/useAuthStore";
 import SidebarSkeleton from "./skeletons/SidebarSkeleton";
-import { Users } from "lucide-react";
+import { Users, UserPlus } from "lucide-react";
+import FindContactsModal from "./FindContactsModal";
 
 const Sidebar = () => {
   const { getUsers, users, selectedUser, setSelectedUser, isUsersLoading } = useChatStore();
 
   const { onlineUsers } = useAuthStore();
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
+  const [showFindContacts, setShowFindContacts] = useState(false);
 
   useEffect(() => {
     getUsers();
@@ -23,11 +25,20 @@ const Sidebar = () => {
   return (
     <aside className="h-full w-20 lg:w-72 border-r border-base-300 flex flex-col transition-all duration-200">
       <div className="border-b border-base-300 w-full p-5">
-        <div className="flex items-center gap-2">
-          <Users className="size-6" />
-          <span className="font-medium hidden lg:block">Contacts</span>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Users className="size-6" />
+            <span className="font-medium hidden lg:block">Contacts</span>
+          </div>
+          <button
+            onClick={() => setShowFindContacts(true)}
+            className="btn btn-ghost btn-sm btn-circle"
+            title="Find Contacts"
+          >
+            <UserPlus className="size-5" />
+          </button>
         </div>
-        {/* TODO: Online filter toggle */}
+        {/* Online filter toggle */}
         <div className="mt-3 hidden lg:flex items-center gap-2">
           <label className="cursor-pointer flex items-center gap-2">
             <input
@@ -78,9 +89,28 @@ const Sidebar = () => {
         ))}
 
         {filteredUsers.length === 0 && (
-          <div className="text-center text-zinc-500 py-4">No online users</div>
+          <div className="text-center text-zinc-500 py-8 px-4">
+            <UserPlus className="size-8 mx-auto mb-2 opacity-40" />
+            <p className="text-sm">No contacts yet</p>
+            <button
+              onClick={() => setShowFindContacts(true)}
+              className="btn btn-primary btn-sm mt-3"
+            >
+              Find People
+            </button>
+          </div>
         )}
       </div>
+
+      {/* Find Contacts Modal */}
+      <FindContactsModal
+        isOpen={showFindContacts}
+        onClose={() => {
+          setShowFindContacts(false);
+          // Refresh the contacts list when modal closes
+          getUsers();
+        }}
+      />
     </aside>
   );
 };

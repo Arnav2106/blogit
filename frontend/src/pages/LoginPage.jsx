@@ -3,6 +3,7 @@ import { useAuthStore } from "../store/useAuthStore";
 import AuthImagePattern from "../components/AuthImagePattern";
 import { Link } from "react-router-dom";
 import { Eye, EyeOff, Loader2, Lock, Mail, MessageSquare } from "lucide-react";
+import { GoogleLogin } from "@react-oauth/google";
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -10,11 +11,15 @@ const LoginPage = () => {
     email: "",
     password: "",
   });
-  const { login, isLoggingIn } = useAuthStore();
+  const { login, googleLogin, isLoggingIn } = useAuthStore();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     login(formData);
+  };
+
+  const handleGoogleSuccess = (credentialResponse) => {
+    googleLogin(credentialResponse.credential);
   };
 
   return (
@@ -96,6 +101,24 @@ const LoginPage = () => {
               )}
             </button>
           </form>
+
+          {/* Divider */}
+          <div className="divider text-base-content/40 text-sm">OR</div>
+
+          {/* Google Sign In */}
+          <div className="flex justify-center">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => {
+                console.log("Google Login Failed");
+              }}
+              theme="outline"
+              size="large"
+              text="continue_with"
+              shape="pill"
+              width="380"
+            />
+          </div>
 
           <div className="text-center">
             <p className="text-base-content/60">

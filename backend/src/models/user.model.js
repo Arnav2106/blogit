@@ -13,13 +13,23 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: true,
-      minlength: 6,
+      // Not required — Google OAuth users may not have a password
+    },
+    googleId: {
+      type: String,
+      sparse: true,
+      unique: true,
     },
     profilePic: {
       type: String,
       default: "",
     },
+    contacts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   { timestamps: true }
 );

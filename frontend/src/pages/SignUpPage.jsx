@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { Eye, EyeOff, Loader2, Lock, Mail, MessageSquare, User } from "lucide-react";
 import { Link } from "react-router-dom";
+import { GoogleLogin } from "@react-oauth/google";
 
 import AuthImagePattern from "../components/AuthImagePattern";
 import toast from "react-hot-toast";
@@ -14,7 +15,7 @@ const SignUpPage = () => {
     password: "",
   });
 
-  const { signup, isSigningUp } = useAuthStore();
+  const { signup, googleLogin, isSigningUp } = useAuthStore();
 
   const validateForm = () => {
     if (!formData.fullName.trim()) return toast.error("Full name is required");
@@ -32,6 +33,10 @@ const SignUpPage = () => {
     const success = validateForm();
 
     if (success === true) signup(formData);
+  };
+
+  const handleGoogleSuccess = (credentialResponse) => {
+    googleLogin(credentialResponse.credential);
   };
 
   return (
@@ -130,6 +135,24 @@ const SignUpPage = () => {
               )}
             </button>
           </form>
+
+          {/* Divider */}
+          <div className="divider text-base-content/40 text-sm">OR</div>
+
+          {/* Google Sign Up */}
+          <div className="flex justify-center">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => {
+                console.log("Google Sign Up Failed");
+              }}
+              theme="outline"
+              size="large"
+              text="continue_with"
+              shape="pill"
+              width="380"
+            />
+          </div>
 
           <div className="text-center">
             <p className="text-base-content/60">

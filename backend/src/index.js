@@ -9,6 +9,7 @@ import { connectDB } from "./lib/db.js";
 
 import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "./routes/message.route.js";
+import contactRoutes from "./routes/contact.route.js";
 import { app, server } from "./lib/socket.js";
 
 import { fileURLToPath } from "url";
@@ -36,6 +37,7 @@ app.get("/api/health", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/contacts", contactRoutes);
 
 const PORT = process.env.PORT || 5001;
 
