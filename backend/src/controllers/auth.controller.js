@@ -2,7 +2,6 @@ import { generateToken } from "../lib/utils.js";
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import cloudinary from "../lib/cloudinary.js";
-import { OAuth2Client } from "google-auth-library";
 
 export const signup = async (req, res) => {
   const { fullName, email, password } = req.body;
@@ -114,63 +113,6 @@ export const checkAuth = (req, res) => {
     res.status(200).json(req.user);
   } catch (error) {
     console.log("Error in checkAuth controller", error.message);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-};
-
-export const googleLogin = async (req, res) => {
-  try {
-    const { credential } = req.body;
-
-    if (!credential) {
-      return res.status(400).json({ message: "Google credential is required" });
-    }
-
-    const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-    const ticket = await client.verifyIdToken({
-      idToken: credential,
-      audience: process.env.GOOGLE_CLIENT_ID,
-    });
-
-    const payload = ticket.getPayload();
-    const { sub: googleId, email, name, picture } = payload;
-
-    // Check if user already exists with this Google ID
-    let user = await User.findOne({ googleId });
-
-    if (!user) {
-      // Check if user exists with same email (e.g. signed up with email/password)
-      user = await User.findOne({ email });
-
-      if (user) {
-        // Link Google account to existing user
-        user.googleId = googleId;
-        if (!user.profilePic && picture) {
-          user.profilePic = picture;
-        }
-        await user.save();
-      } else {
-        // Create a brand new user
-        user = new User({
-          email,
-          fullName: name,
-          googleId,
-          profilePic: picture || "",
-        });
-        await user.save();
-      }
-    }
-
-    generateToken(user._id, res);
-
-    res.status(200).json({
-      _id: user._id,
-      fullName: user.fullName,
-      email: user.email,
-      profilePic: user.profilePic,
-    });
-  } catch (error) {
-    console.log("Error in googleLogin controller:", error.message);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };

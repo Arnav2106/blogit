@@ -13,12 +13,8 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      // Not required — Google OAuth users may not have a password
-    },
-    googleId: {
-      type: String,
-      sparse: true,
-      unique: true,
+      required: true,
+      minlength: 6,
     },
     profilePic: {
       type: String,
